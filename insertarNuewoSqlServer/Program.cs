@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,53 +20,40 @@ namespace insertarNuewoSqlServer
             SqlConnection conexion = null;
             try
             {
-                rutaConexion.DataSource = "localhost";
+                rutaConexion.DataSource = "192.168.1.55";
                 rutaConexion.UserID = "sa";
-                rutaConexion.Password = "135678";
-                rutaConexion.IntegratedSecurity = true;
+                rutaConexion.Password = "123*abc*456";
+
+                //rutaConexion.IntegratedSecurity = true;
                 rutaConexion.InitialCatalog = "DB_PRACTICAS";
                 conexion = new SqlConnection(rutaConexion.ToString());
                 conexion.Open();
 
                 Random random = new Random();
-                int pos = 0, indexTipo = 1;
+                int pos = 0, indexTipo = 1, randomTipo = 0;
                 SqlCommand command = null;
                 SqlDataReader reader = null;
+
+
+
+
+
                 string query = "select id from tipotrx;";
                 command = new SqlCommand(query, conexion);
                 reader = command.ExecuteReader();
                 Dictionary<int, string> keyValueTipoTrx = new Dictionary<int, string>();
+
+
                 Dictionary<string, List<string>> tipoRazonPorId = new Dictionary<string, List<string>>();
                 string primerValorTipoRazon = "";
                 while (reader.Read())
                 {
                     keyValueTipoTrx.Add(indexTipo, reader[0].ToString());
-
                     indexTipo++;
                 }
                 reader.Close();
-                //foreach (KeyValuePair<int, string> kvp in keyValueTipoTrx)
-                //{
-                //    Console.WriteLine("key: " + kvp.Key + ", value: " + kvp.Value);
-                //}
-
-                //   Console.WriteLine(tipoRazonPorId[keyValueTipoTrx[pos][0].ToString()]);
 
 
-                //Console.WriteLine(primerValorTipoRazon);
-                //if (tipoRazonPorId.ContainsKey(keyValueTipoTrx[pos]))
-                //{
-                //    List<string> valores = tipoRazonPorId[keyValueTipoTrx[pos]];
-                //    foreach (string valor in valores)
-                //    {
-                //        Console.WriteLine($"Clave:{keyValueTipoTrx[pos]}, Valor: {valor}");
-                //    }
-                //}
-                //else
-                //{
-
-                //    Console.WriteLine("No se encontro el codigo");
-                //}
                 DataTable dt = new DataTable();
                 dt.Columns.Add("pr_id", typeof(int));
                 dt.Columns.Add("pr_fecha", typeof(DateTime));
@@ -77,7 +65,7 @@ namespace insertarNuewoSqlServer
                 dt.Columns.Add("pr_autoriza", typeof(string));
 
 
-                for (int i = 1; i <= 20000; i++)
+                for (int i = 1; i <= 100000; i++)
                 {
                     pos = random.Next(1, 55);
                     query = $"select id_razon from TRtrx where id_tipo = {keyValueTipoTrx[pos]};";
@@ -101,7 +89,21 @@ namespace insertarNuewoSqlServer
                     fila["pr_tarjeta"] = "1233423213";
                     fila["pr_valor"] = "0";
                     fila["pr_tipoTrx"] = keyValueTipoTrx[pos];
-                    primerValorTipoRazon = tipoRazonPorId.ContainsKey(keyValueTipoTrx[pos]) ? tipoRazonPorId[keyValueTipoTrx[pos]][0] : "0";
+                    if (tipoRazonPorId.ContainsKey(keyValueTipoTrx[pos]))
+                    {
+                        List<string> valores = tipoRazonPorId[keyValueTipoTrx[pos]];
+                        //Console.WriteLine(valores.Count);
+                        randomTipo = random.Next(1, valores.Count);
+                        randomTipo -= 1;
+                        //  Console.WriteLine($"{tipoRazonPorId[keyValueTipoTrx[pos]][randomTipo - 1]}");
+                    }
+                    else
+                    {
+                        randomTipo = 0;
+                    }
+
+
+                    primerValorTipoRazon = tipoRazonPorId.ContainsKey(keyValueTipoTrx[pos]) ? tipoRazonPorId[keyValueTipoTrx[pos]][randomTipo] : "0";
                     fila["pr_razon"] = primerValorTipoRazon;
                     fila["pr_autoriza"] = "ney";
 
@@ -153,5 +155,29 @@ namespace insertarNuewoSqlServer
                 dict[clave] = new List<string> { valor };
             }
         }
+        //Console.WriteLine(primerValorTipoRazon);
+        //if (tipoRazonPorId.ContainsKey(keyValueTipoTrx[pos]))
+        //{
+        //    List<string> valores = tipoRazonPorId[keyValueTipoTrx[pos]];
+        //    foreach (string valor in valores)
+        //    {
+        //        Console.WriteLine($"Clave:{keyValueTipoTrx[pos]}, Valor: {valor}");
+        //    }
+        //}
+        //else
+        //{
+
+        //foreach (KeyValuePair<int, string> kvp in keyValueTipoTrx)
+        //{
+        //    Console.WriteLine("key: " + kvp.Key + ", value: " + kvp.Value);
+        //}
+
+        //   Console.WriteLine(tipoRazonPorId[keyValueTipoTrx[pos][0].ToString()]);
+
+
+
+
+        //    Console.WriteLine("No se encontro el codigo");
+        //}
     }
 }

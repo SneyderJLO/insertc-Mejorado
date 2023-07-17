@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="DB_PRACTICAS" Class="databaseDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=192.168.1.55;Initial Catalog=DB_PRACTICAS;User ID=sa" SettingsObjectName="insertarNuewoSqlServer.Properties.Settings" SettingsPropertyName="DB_PRACTICASConnectionString1" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.TRtrx" Member="TRtrx">
+    <Type Name="TRtrx">
+      <Column Name="id_tipo" Type="System.String" DbType="VarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="id_razon" Type="System.String" DbType="NVarChar(10) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.tipotrx" Member="tipotrx">
+    <Type Name="tipotrx">
+      <Column Name="id" Type="System.String" DbType="VarChar(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="descripcion" Type="System.String" DbType="NVarChar(30) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+</Database>
