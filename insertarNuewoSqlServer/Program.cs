@@ -44,7 +44,10 @@ namespace insertarNuewoSqlServer
                     indexTipo++;
                 }
                 reader.Close();
-
+                //foreach (KeyValuePair<int, string> kvp in keyValueTipoTrx)
+                //{
+                //    Console.WriteLine("key: " + kvp.Key + ", value: " + kvp.Value);
+                //}
 
                 //   Console.WriteLine(tipoRazonPorId[keyValueTipoTrx[pos][0].ToString()]);
 
@@ -74,7 +77,7 @@ namespace insertarNuewoSqlServer
                 dt.Columns.Add("pr_autoriza", typeof(string));
 
 
-                for (int i = 1; i <= 100000; i++)
+                for (int i = 1; i <= 20000; i++)
                 {
                     pos = random.Next(1, 55);
                     query = $"select id_razon from TRtrx where id_tipo = {keyValueTipoTrx[pos]};";
