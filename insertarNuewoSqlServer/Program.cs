@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Linq;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
@@ -26,26 +27,27 @@ namespace insertarNuewoSqlServer
 
                 //rutaConexion.IntegratedSecurity = true;
                 rutaConexion.InitialCatalog = "DB_PRACTICAS";
+                //Console.WriteLine(rutaConexion);
+                //databaseDataContext dpPrueba = new databaseDataContext(rutaConexion.ToString());
+                int pos = 0, indexTipo = 1, randomTipo = 0;
+                string query = "", primerValorTipoRazon = "";
+                Dictionary<int, string> keyValueTipoTrx = new Dictionary<int, string>();
+                Dictionary<string, List<string>> tipoRazonPorId = new Dictionary<string, List<string>>();
+
+
+
                 conexion = new SqlConnection(rutaConexion.ToString());
                 conexion.Open();
 
                 Random random = new Random();
-                int pos = 0, indexTipo = 1, randomTipo = 0;
+
                 SqlCommand command = null;
                 SqlDataReader reader = null;
 
-
-
-
-
-                string query = "select id from tipotrx;";
+                query = "select id from tipotrx;";
                 command = new SqlCommand(query, conexion);
                 reader = command.ExecuteReader();
-                Dictionary<int, string> keyValueTipoTrx = new Dictionary<int, string>();
 
-
-                Dictionary<string, List<string>> tipoRazonPorId = new Dictionary<string, List<string>>();
-                string primerValorTipoRazon = "";
                 while (reader.Read())
                 {
                     keyValueTipoTrx.Add(indexTipo, reader[0].ToString());
@@ -63,13 +65,16 @@ namespace insertarNuewoSqlServer
                 dt.Columns.Add("pr_tipoTrx", typeof(string));
                 dt.Columns.Add("pr_razon", typeof(string));
                 dt.Columns.Add("pr_autoriza", typeof(string));
-
-
+                SqlBulkCopy bulkCopy =
+                           new SqlBulkCopy(conexion);
                 for (int i = 1; i <= 100000; i++)
                 {
+
+
                     pos = random.Next(1, 55);
+
                     query = $"select id_razon from TRtrx where id_tipo = {keyValueTipoTrx[pos]};";
-                    // Console.WriteLine(query);
+
                     command = new SqlCommand(query, conexion);
                     reader = command.ExecuteReader();
                     while (reader.Read())
@@ -97,31 +102,37 @@ namespace insertarNuewoSqlServer
                         randomTipo -= 1;
                         //  Console.WriteLine($"{tipoRazonPorId[keyValueTipoTrx[pos]][randomTipo - 1]}");
                     }
-                    else
-                    {
-                        randomTipo = 0;
-                    }
+
+
+
+
 
 
                     primerValorTipoRazon = tipoRazonPorId.ContainsKey(keyValueTipoTrx[pos]) ? tipoRazonPorId[keyValueTipoTrx[pos]][randomTipo] : "0";
+
+
+
+
+
                     fila["pr_razon"] = primerValorTipoRazon;
                     fila["pr_autoriza"] = "ney";
+
 
                     dt.Rows.Add(fila);
 
 
                 }
-                using (SqlBulkCopy bulkCopy =
-                           new SqlBulkCopy(conexion))
-                {
-                    bulkCopy.DestinationTableName =
-                        "pr_transacciones";
+
+                bulkCopy.DestinationTableName =
+                            "pr_transacciones";
 
 
-                    bulkCopy.WriteToServer(dt);
-                    bulkCopy.Close();
+                bulkCopy.WriteToServer(dt);
+                bulkCopy.Close();
 
-                }
+
+
+
             }
             catch (SqlException ex)
             {
