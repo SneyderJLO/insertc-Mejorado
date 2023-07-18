@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "insertarNuewoSqlServer", "insertarNuewoSqlServer.csproj", "{E4BBFCD5-EA76-4C9E-8352-DEFA8F35892C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E4BBFCD5-EA76-4C9E-8352-DEFA8F35892C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4BBFCD5-EA76-4C9E-8352-DEFA8F35892C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4BBFCD5-EA76-4C9E-8352-DEFA8F35892C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4BBFCD5-EA76-4C9E-8352-DEFA8F35892C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DB4971DC-EA61-488D-81B2-5B94C1CA584A}
+	EndGlobalSection
+EndGlobal
