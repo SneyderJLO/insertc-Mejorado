@@ -10,13 +10,10 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-
 namespace insertarNuewoSqlServer
 {
     internal class Program
     {
-
         static void Main(string[] args)
         {
             SqlConnectionStringBuilder rutaConexion = new SqlConnectionStringBuilder();
@@ -27,18 +24,14 @@ namespace insertarNuewoSqlServer
                 rutaConexion.DataSource = "192.168.1.55";
                 rutaConexion.UserID = "sa";
                 rutaConexion.Password = "123*abc*456";
-                //  rutaConexion.IntegratedSecurity = false;
+                // rutaConexion.IntegratedSecurity = false;
                 rutaConexion.InitialCatalog = "DB_PRACTICAS";
                 conexion = new SqlConnection(rutaConexion.ToString());
                 conexion.Open();
-                int randomTipo = 0;
-                string primerValorTipoRazon = "", tipoTrx = ""; ;
-                SqlBulkCopy bulkCopy = new SqlBulkCopy(conexion);
+                string primerValorTipoRazon = "", tipoTrx = "";
                 Random random = new Random();
                 Dictionary<int, string> keyValueTipoTrx = obtenerTipoTrx(conexion);
                 Dictionary<string, int> dicionarioFilasTrx = obtenerFilasTipoTrx(keyValueTipoTrx, conexion);
-                //Dictionary<string, List<string>> tipoRazonPorId = null;
-                List<string> valores = null;
                 DataRow fila = null;
                 DataTable dt = new DataTable();
                 dt.Columns.Add("pr_id", typeof(int));
@@ -49,14 +42,9 @@ namespace insertarNuewoSqlServer
                 dt.Columns.Add("pr_tipoTrx", typeof(string));
                 dt.Columns.Add("pr_razon", typeof(string));
                 dt.Columns.Add("pr_autoriza", typeof(string));
-                int contador = 1;
+
                 for (int i = 1; i <= 100000; i++)
                 {
-                    //contador = i;
-                    if (contador == 55)
-                    {
-                        contador = 1;
-                    }
                     int pos = random.Next(1, 55);
                     tipoTrx = keyValueTipoTrx[pos];
                     primerValorTipoRazon = obtenerRazonesPorTipo(tipoRazonPorId, dicionarioFilasTrx, keyValueTipoTrx, pos, conexion);
@@ -73,15 +61,16 @@ namespace insertarNuewoSqlServer
                     fila["pr_razon"] = primerValorTipoRazon;
                     fila["pr_autoriza"] = "ney";
                     dt.Rows.Add(fila);
-                    contador++;
-
-
-
+                    if (i % 50000 == 0)
+                    {
+                        SqlBulkCopy bulkCopy = new SqlBulkCopy(conexion);
+                        bulkCopy.DestinationTableName = "pr_transacciones";
+                        bulkCopy.WriteToServer(dt);
+                        dt.Clear();
+                        //bulkCopy.Close();
+                        Console.WriteLine(i);
+                    }
                 }
-                bulkCopy.DestinationTableName = "pr_transacciones";
-                bulkCopy.WriteToServer(dt);
-                bulkCopy.Close();
-
             }
             catch (SqlException ex)
             {
@@ -106,15 +95,21 @@ namespace insertarNuewoSqlServer
             SqlDataReader reader = null;
             Dictionary<int, string> keyValueTipoTrx = new Dictionary<int, string>();
             query = "select id from tipotrx;";
-            command = new SqlCommand(query, conexion);
-            reader = command.ExecuteReader();
-            while (reader.Read())
+            try
             {
-                keyValueTipoTrx.Add(indexTipo, reader[0].ToString());
-                indexTipo++;
+                command = new SqlCommand(query, conexion);
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    keyValueTipoTrx.Add(indexTipo, reader[0].ToString());
+                    indexTipo++;
+                }
+                reader.Close();
             }
-            reader.Close();
-
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             return keyValueTipoTrx;
         }
 
@@ -122,25 +117,26 @@ namespace insertarNuewoSqlServer
         static Dictionary<string, int> obtenerFilasTipoTrx(Dictionary<int, string> keyValueTipoTrx, SqlConnection conexion)
         {
             string query = "";
-            int indexTipo = 1;
             SqlCommand command = null;
-            // SqlDataReader reader = null;
             Dictionary<string, int> dictionaryFilas = new Dictionary<string, int>();
-            foreach (KeyValuePair<int, string> item in keyValueTipoTrx)
+            try
             {
-                query = $"select count(*) from TRtrx where id_tipo = {keyValueTipoTrx[item.Key]};";
-                //Console.WriteLine(query);
-                command = new SqlCommand(query, conexion);
-                dictionaryFilas.Add(keyValueTipoTrx[item.Key], Convert.ToInt32(command.ExecuteScalar()));
-
+                foreach (KeyValuePair<int, string> item in keyValueTipoTrx)
+                {
+                    query = $"select count(*) from TRtrx where id_tipo = {keyValueTipoTrx[item.Key]};";
+                    command = new SqlCommand(query, conexion);
+                    dictionaryFilas.Add(keyValueTipoTrx[item.Key], Convert.ToInt32(command.ExecuteScalar()));
+                }
+                //foreach (KeyValuePair<string, int> item in dictionaryFilas)
+                //{
+                // Console.WriteLine($"{item.Key} -- {item.Value}");
+                //}
 
             }
-            //foreach (KeyValuePair<string, int> item in dictionaryFilas)
-            //{
-            //    Console.WriteLine($"{item.Key} -- {item.Value}");
-            //}
-
-
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             return dictionaryFilas;
         }
 
@@ -149,15 +145,10 @@ namespace insertarNuewoSqlServer
         {
             string razonValue;
             Random random = new Random();
-            //tipoRazonPorId = 
-
             razonValue = "0";
             string query = $"select id_razon from TRtrx where id_tipo = {dicionatioTipo[pos]};";
 
             int filas = dicionarioFilasTrx[dicionatioTipo[pos]];
-            //Console.WriteLine(pos);
-            //Console.WriteLine(dicionatioTipo[pos]);
-            //Console.WriteLine(filas);
             try
             {
 
@@ -165,15 +156,12 @@ namespace insertarNuewoSqlServer
 
                 if (tipoRazonPorId.ContainsKey(dicionatioTipo[pos].ToString()))
                 {
-                    // La clave ya existe en el diccionario, no necesitas volver a ejecutar la consulta
-
                     int randomTipo = random.Next(0, filas);
                     razonValue = tipoRazonPorId[dicionatioTipo[pos].ToString()][randomTipo];
 
                 }
                 else
                 {
-                    // La clave no existe en el diccionario, entonces necesitas obtener los datos de la base de datos
                     query = $"select id_razon from TRtrx where id_tipo = {dicionatioTipo[pos]};";
                     command = new SqlCommand(query, conexion);
 
@@ -190,9 +178,6 @@ namespace insertarNuewoSqlServer
                         tipoRazonPorId[dicionatioTipo[pos].ToString()].Add(idRazon);
                     }
                     reader.Close();
-                    //  razonValue = "0";
-                    //Console.WriteLine(dicionatioTipo[pos]);
-
                 }
 
             }
@@ -200,7 +185,6 @@ namespace insertarNuewoSqlServer
             {
                 Console.WriteLine(ex);
             }
-
 
             return razonValue;
         }
@@ -230,26 +214,26 @@ namespace insertarNuewoSqlServer
         //Console.WriteLine(primerValorTipoRazon);
         //if (tipoRazonPorId.ContainsKey(keyValueTipoTrx[pos]))
         //{
-        //    List<string> valores = tipoRazonPorId[keyValueTipoTrx[pos]];
-        //    foreach (string valor in valores)
-        //    {
-        //        Console.WriteLine($"Clave:{keyValueTipoTrx[pos]}, Valor: {valor}");
-        //    }
+        // List<string> valores = tipoRazonPorId[keyValueTipoTrx[pos]];
+        // foreach (string valor in valores)
+        // {
+        // Console.WriteLine($"Clave:{keyValueTipoTrx[pos]}, Valor: {valor}");
+        // }
         //}
         //else
         //{
 
         //foreach (KeyValuePair<int, string> kvp in keyValueTipoTrx)
         //{
-        //    Console.WriteLine("key: " + kvp.Key + ", value: " + kvp.Value);
+        // Console.WriteLine("key: " + kvp.Key + ", value: " + kvp.Value);
         //}
 
-        //   Console.WriteLine(tipoRazonPorId[keyValueTipoTrx[pos][0].ToString()]);
+        // Console.WriteLine(tipoRazonPorId[keyValueTipoTrx[pos][0].ToString()]);
 
 
 
 
-        //    Console.WriteLine("No se encontro el codigo");
+        // Console.WriteLine("No se encontro el codigo");
         //}
     }
 }
