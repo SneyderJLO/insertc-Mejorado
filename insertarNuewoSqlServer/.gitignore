@@ -1,0 +1,6 @@
+*.vsidx
+*.exe
+*.pdb
+*.cache
+/vs
+../vs

@@ -1,0 +1,5 @@
+D:\Users\enrique\Documents\Cursos\c#\ejercicios\insertarNuewoSqlServer\insertarNuewoSqlServer\obj\Debug\net7.0\insertarNuewoSqlServer.csproj.AssemblyReference.cache
+D:\Users\enrique\Documents\Cursos\c#\ejercicios\insertarNuewoSqlServer\insertarNuewoSqlServer\obj\Debug\net7.0\insertarNuewoSqlServer.GeneratedMSBuildEditorConfig.editorconfig
+D:\Users\enrique\Documents\Cursos\c#\ejercicios\insertarNuewoSqlServer\insertarNuewoSqlServer\obj\Debug\net7.0\insertarNuewoSqlServer.AssemblyInfoInputs.cache
+D:\Users\enrique\Documents\Cursos\c#\ejercicios\insertarNuewoSqlServer\insertarNuewoSqlServer\obj\Debug\net7.0\insertarNuewoSqlServer.AssemblyInfo.cs
+D:\Users\enrique\Documents\Cursos\c#\ejercicios\insertarNuewoSqlServer\insertarNuewoSqlServer\obj\Debug\net7.0\insertarNuewoSqlServer.csproj.CoreCompileInputs.cache
